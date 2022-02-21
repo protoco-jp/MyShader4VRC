@@ -1,4 +1,4 @@
-﻿Shader "MS4VRC/Dither" {
+﻿Shader "Dither/Dither" {
     Properties {
         [HDR] _Color ("Color", Color) = (1,1,1,1)
         [KeywordEnum(BAYER, IGN, WHITE)]_NOISE("Noise Keyword", Float) = 0

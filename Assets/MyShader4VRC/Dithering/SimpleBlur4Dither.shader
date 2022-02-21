@@ -1,4 +1,4 @@
-﻿Shader "MS4VRC/SimpleBlur" {
+﻿Shader "Dither/Blur" {
     Properties {
         _Blur("Blur Size",Range(1,10)) = 1
     }
