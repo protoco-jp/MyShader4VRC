@@ -1,7 +1,7 @@
 ﻿Shader "Dither/Dither" {
     Properties {
         [HDR] _Color ("Color", Color) = (1,1,1,1)
-        [KeywordEnum(BAYER, IGN, WHITE)]_NOISE("Noise Keyword", Float) = 0
+        [KeywordEnum(NONE, BAYER, IGN, WHITE)]_NOISE("Noise Keyword", Float) = 0
         _BayerTex ("Texture", 2D) = "white" {}
         _Offset("Noise Offset", Range(0,1)) = 0.5
     }
@@ -13,7 +13,7 @@
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #pragma shader_feature _NOISE_BAYER _NOISE_WHITE _NOISE_IGN
+            #pragma shader_feature _NOISE_NONE _NOISE_BAYER _NOISE_WHITE _NOISE_IGN
             // make fog work
             #pragma multi_compile_fog
 
@@ -54,8 +54,9 @@
                     float3 magic = float3(0.06711056,0.00583715,52.9829189);
                     float threshold = frac(magic.z * frac(dot(screenUV,magic.xy)));
                 #endif
-
-                clip(_Color.a - threshold);
+                #ifndef _NOISE_NONE
+                    clip(_Color.a - threshold);
+                #endif
 
                 float4 col = _Color;
                 UNITY_APPLY_FOG(i.fogCoord, col);

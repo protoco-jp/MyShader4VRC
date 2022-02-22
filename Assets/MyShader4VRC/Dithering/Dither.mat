@@ -74,7 +74,7 @@ Material:
     - _IGN_Offset: 0.657
     - _Metallic: 0
     - _Mode: 0
-    - _NOISE: 0
+    - _NOISE: 1
     - _OcclusionStrength: 1
     - _Offset: 0.5
     - _Parallax: 0.02
