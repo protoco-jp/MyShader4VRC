@@ -1,6 +1,6 @@
 ﻿Shader "Dither/Blur" {
     Properties {
-        _Blur("Blur Size",Range(1,10)) = 1
+        _Blur("Blur Size",Range(0,10)) = 1
     }
     SubShader {
         Tags { "RenderType"="Transparent" "Queue" = "Transparent+999" }
@@ -45,11 +45,20 @@
                 bgcolor += tex2D(_BlurTexture, screenUV + float2(-texcelSize.x, 0));
                 bgcolor += tex2D(_BlurTexture, screenUV + float2(0, texcelSize.y));
                 bgcolor += tex2D(_BlurTexture, screenUV + float2(0, -texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + 0.7*float2(texcelSize.x, texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + 0.7*float2(texcelSize.x, -texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + 0.7*float2(-texcelSize.x, texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + 0.7*float2(-texcelSize.x, -texcelSize.y));
-                bgcolor /= 9;
+                bgcolor += tex2D(_BlurTexture, screenUV + 0.7 * float2(texcelSize.x, texcelSize.y));
+                bgcolor += tex2D(_BlurTexture, screenUV + 0.7 * float2(texcelSize.x, -texcelSize.y));
+                bgcolor += tex2D(_BlurTexture, screenUV + 0.7 * float2(-texcelSize.x, texcelSize.y));
+                bgcolor += tex2D(_BlurTexture, screenUV + 0.7 * float2(-texcelSize.x, -texcelSize.y));
+                bgcolor += tex2D(_BlurTexture, screenUV + 0.5 * float2(texcelSize.x, 0));
+                bgcolor += tex2D(_BlurTexture, screenUV + 0.5 * float2(-texcelSize.x, 0));
+                bgcolor += tex2D(_BlurTexture, screenUV + 0.5 * float2(0, texcelSize.y));
+                bgcolor += tex2D(_BlurTexture, screenUV + 0.5 * float2(0, -texcelSize.y));
+                bgcolor += tex2D(_BlurTexture, screenUV + 0.5 * 0.7 * float2(texcelSize.x, texcelSize.y));
+                bgcolor += tex2D(_BlurTexture, screenUV + 0.5 * 0.7 * float2(texcelSize.x, -texcelSize.y));
+                bgcolor += tex2D(_BlurTexture, screenUV + 0.5 * 0.7 * float2(-texcelSize.x, texcelSize.y));
+                bgcolor += tex2D(_BlurTexture, screenUV + 0.5 * 0.7 * float2(-texcelSize.x, -texcelSize.y));
+
+                bgcolor /= 17;
                 return bgcolor;
             }
             ENDCG

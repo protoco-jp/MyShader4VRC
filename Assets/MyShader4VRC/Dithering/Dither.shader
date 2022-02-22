@@ -3,7 +3,7 @@
         [HDR] _Color ("Color", Color) = (1,1,1,1)
         [KeywordEnum(BAYER, IGN, WHITE)]_NOISE("Noise Keyword", Float) = 0
         _BayerTex ("Texture", 2D) = "white" {}
-        _IGN_Offset("IGN Offset", Range(0,1)) = 0.5
+        _Offset("Noise Offset", Range(0,1)) = 0.5
     }
     SubShader {
         Tags { "RenderType"="Opaque" }
@@ -30,7 +30,7 @@
             };
 
             uniform float4 _Color;
-            uniform float _IGN_Offset;
+            uniform float _Offset;
             sampler2D _BayerTex;
             float4 _BayerTex_TexelSize;
 
@@ -44,13 +44,13 @@
 
             float3 frag (v2f i) : SV_Target {
                 #ifdef _NOISE_BAYER //bayer matrix
-                    float2 screenUV = (i.scrPos.xy / i.scrPos.w) * (_ScreenParams.xy / _BayerTex_TexelSize.zw);
-                    float threshold = tex2D( _BayerTex, screenUV ).r;
+                    float2 screenUV = (i.scrPos.xy / i.scrPos.w) * (_ScreenParams.xy / _BayerTex_TexelSize.zw) + _Offset;
+                    float threshold = clamp(tex2D( _BayerTex, screenUV ).r, 0.001, 0.999);
                 #elif _NOISE_WHITE //white noise
                     float2 screenUV = (i.scrPos.xy / i.scrPos.w) * _ScreenParams.xy;
                     float threshold = frac(sin(dot(screenUV, fixed2(12.9898,78.233))) * 43758.5453);
                 #elif _NOISE_IGN //Interleaved Gradient Noise (CoD Dither)
-                    float2 screenUV = (i.scrPos.xy / i.scrPos.w) * _ScreenParams.xy + _IGN_Offset;
+                    float2 screenUV = (i.scrPos.xy / i.scrPos.w) * _ScreenParams.xy + _Offset;
                     float3 magic = float3(0.06711056,0.00583715,52.9829189);
                     float threshold = frac(magic.z * frac(dot(screenUV,magic.xy)));
                 #endif
