@@ -17,7 +17,6 @@
 
             struct appdata {
                 float4 vertex : POSITION;
-                float3 normal : NORMAL;
             };
 
             struct v2f {
@@ -41,25 +40,16 @@
                 float2 texcelSize = _BlurTexture_TexelSize.xy * _Blur;
                 float4 bgcolor = tex2D(_BlurTexture,  screenUV);
 
-                bgcolor += tex2D(_BlurTexture, screenUV + float2(texcelSize.x, 0));
-                bgcolor += tex2D(_BlurTexture, screenUV + float2(-texcelSize.x, 0));
-                bgcolor += tex2D(_BlurTexture, screenUV + float2(0, texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + float2(0, -texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + 0.7 * float2(texcelSize.x, texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + 0.7 * float2(texcelSize.x, -texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + 0.7 * float2(-texcelSize.x, texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + 0.7 * float2(-texcelSize.x, -texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + 0.5 * float2(texcelSize.x, 0));
-                bgcolor += tex2D(_BlurTexture, screenUV + 0.5 * float2(-texcelSize.x, 0));
-                bgcolor += tex2D(_BlurTexture, screenUV + 0.5 * float2(0, texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + 0.5 * float2(0, -texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + 0.5 * 0.7 * float2(texcelSize.x, texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + 0.5 * 0.7 * float2(texcelSize.x, -texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + 0.5 * 0.7 * float2(-texcelSize.x, texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + 0.5 * 0.7 * float2(-texcelSize.x, -texcelSize.y));
-
-                bgcolor /= 17;
-                return bgcolor;
+                float4 neighborPixel = tex2D(_BlurTexture, screenUV + float2(texcelSize.x, 0));
+                neighborPixel += tex2D(_BlurTexture, screenUV + float2(-texcelSize.x, 0));
+                neighborPixel += tex2D(_BlurTexture, screenUV + float2(0, texcelSize.y));
+                neighborPixel += tex2D(_BlurTexture, screenUV + float2(0, -texcelSize.y));
+                neighborPixel += 0.7 * tex2D(_BlurTexture, screenUV + float2(texcelSize.x, texcelSize.y));
+                neighborPixel += 0.7 * tex2D(_BlurTexture, screenUV + float2(texcelSize.x, -texcelSize.y));
+                neighborPixel += 0.7 * tex2D(_BlurTexture, screenUV + float2(-texcelSize.x, texcelSize.y));
+                neighborPixel += 0.7 * tex2D(_BlurTexture, screenUV + float2(-texcelSize.x, -texcelSize.y));
+        
+                return bgcolor;// + neighborPixel * 0.2 / 8;
             }
             ENDCG
         }
