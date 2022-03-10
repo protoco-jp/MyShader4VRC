@@ -1,6 +1,7 @@
 ﻿Shader "Dither/FakeTAA/FTAA"
 {
     Properties {
+        _temporalWeight("Temporal Weight", Range(0,1)) = 0.5
     }
     SubShader {
         Tags { "RenderType"="Transparent" "Queue" = "Transparent+998" }
@@ -34,16 +35,16 @@
                 return o;
             }
 
+            uniform float _temporalWeight;
             sampler2D _OldBufferTexture;
             sampler2D _CurrentBufferTexture;
             float4 _OldBufferTexture_TexelSize;
 
             float3 frag (v2f i) : SV_Target {
-                float temporalWeight = 0.05;
                 float2 screenUV = i.scrPos.xy / i.scrPos.w; 
                 float3 oldCol = saturate(tex2D(_OldBufferTexture,  screenUV));
                 float3 currentCol = saturate(tex2D(_CurrentBufferTexture,  screenUV));
-                return (1-temporalWeight)*oldCol + temporalWeight*currentCol;
+                return (1-_temporalWeight)*oldCol + _temporalWeight*currentCol;
             }
             ENDCG
         }
