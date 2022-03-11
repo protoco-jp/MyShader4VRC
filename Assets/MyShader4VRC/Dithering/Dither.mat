@@ -77,8 +77,8 @@ Material:
     - _NOISE: 1
     - _OcclusionStrength: 1
     - _Offset: 0
-    - _OffsetX: 0
-    - _OffsetY: 0
+    - _OffsetX: 0.414
+    - _OffsetY: 0.318
     - _Parallax: 0.02
     - _Shade: 0.656
     - _SmoothnessTextureChannel: 0
@@ -87,5 +87,5 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 0.36078432}
+    - _Color: {r: 0, g: 0.06871343, b: 1, a: 0.24705882}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

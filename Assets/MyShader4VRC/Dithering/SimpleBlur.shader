@@ -1,6 +1,7 @@
 ﻿Shader "Dither/Blur" {
     Properties {
-        [KeywordEnum(BOX_2X2, BOX_4X4)]_BLUR("Box Size", Float) = 0
+        [KeywordEnum(BOX_2X2, BOX_4X4)]_BLUR("Box Size", Int) = 0
+        [KeywordEnum(ON, OFF)]_Blur_On_Off("ON/OFF", Int) = 0
     }
     SubShader {
         Tags { "RenderType"="Transparent" "Queue" = "Transparent+999" }
@@ -18,15 +19,22 @@
 
             struct appdata {
                 float4 vertex : POSITION;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
             struct v2f {
                 float4 vertex : SV_POSITION;
                 float4 scrPos : TEXCOORD0;
+                UNITY_VERTEX_OUTPUT_STEREO
             };
 
             v2f vert (appdata v) {
                 v2f o;
+
+                UNITY_SETUP_INSTANCE_ID(v);
+                UNITY_INITIALIZE_OUTPUT(v2f, o);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.scrPos = ComputeScreenPos(o.vertex);
                 return o;
@@ -34,6 +42,7 @@
 
             sampler2D _BlurTexture;
             float4 _BlurTexture_TexelSize;
+            int _Blur_On_Off;
 
             fixed4 frag (v2f i) : SV_Target {
                 float2 screenUV = i.scrPos.xy / i.scrPos.w; 
@@ -69,7 +78,7 @@
                 bgcolor /= 16;
                 #endif
 
-                return bgcolor;
+                return bgcolor * (1 - _Blur_On_Off) + _Blur_On_Off * tex2D(_BlurTexture, screenUV);
             }
             ENDCG
         }
