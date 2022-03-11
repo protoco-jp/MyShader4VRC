@@ -1,15 +1,21 @@
 ﻿Shader "Dither/Blur" {
     Properties {
         [KeywordEnum(BOX_2X2, BOX_4X4)]_BLUR("Box Size", Int) = 0
-        [KeywordEnum(ON, OFF)]_Blur_On_Off("ON/OFF", Int) = 0
+        _Blur_Edge("ON/OFF",Range(0,1)) = 0
     }
     SubShader {
         Tags { "RenderType"="Transparent" "Queue" = "Transparent+999" }
         LOD 100
+        Cull Front
+        Ztest Always
 
         GrabPass{ "_BlurTexture" }
 
         Pass {
+            Stencil {
+                Ref 128
+                Comp Equal
+            }
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -42,7 +48,7 @@
 
             sampler2D _BlurTexture;
             float4 _BlurTexture_TexelSize;
-            int _Blur_On_Off;
+            float _Blur_Edge;
 
             fixed4 frag (v2f i) : SV_Target {
                 float2 screenUV = i.scrPos.xy / i.scrPos.w; 
@@ -78,7 +84,7 @@
                 bgcolor /= 16;
                 #endif
 
-                return bgcolor * (1 - _Blur_On_Off) + _Blur_On_Off * tex2D(_BlurTexture, screenUV);
+                return bgcolor * (1 - _Blur_Edge) + _Blur_Edge * tex2D(_BlurTexture, screenUV);
             }
             ENDCG
         }

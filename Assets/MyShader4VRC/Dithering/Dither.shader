@@ -11,15 +11,7 @@
     SubShader {
         Tags { "Queue"="AlphaTest" "LightMode"="ForwardBase"}
         LOD 100
-        Pass {
-            Stencil {
-                Ref 1
-                Comp Equal
-                Pass IncrSat
-            }
-            ColorMask 0
-            ZWrite Off
-        }
+
         Pass {
             CGPROGRAM
             #pragma vertex vert
@@ -99,6 +91,14 @@
                 return col.rgb;
             }
             ENDCG
+        }
+        Pass {
+            Stencil {
+                Ref 128
+                Pass Replace
+            }
+            ColorMask 0
+            ZWrite Off
         }
     }
 }

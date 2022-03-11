@@ -60,6 +60,7 @@ Material:
     - _BLUR_ON_OFF: 0
     - _Blur: 5.38
     - _BlurWidth: 0
+    - _Blur_Edge: 0
     - _Blur_On_Off: 0
     - _BumpScale: 1
     - _Cutoff: 0.5
