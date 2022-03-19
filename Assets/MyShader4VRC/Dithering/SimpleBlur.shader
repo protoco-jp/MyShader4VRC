@@ -4,7 +4,7 @@
         _Blur_Edge("ON/OFF",Range(0,1)) = 0
     }
     SubShader {
-        Tags { "RenderType"="Transparent" "Queue" = "Transparent+999" }
+        Tags { "RenderType"="Transparent" "Queue" = "Transparent+998" }
         LOD 100
         Cull Front
         Ztest Always

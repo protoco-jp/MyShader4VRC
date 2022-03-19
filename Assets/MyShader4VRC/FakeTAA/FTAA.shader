@@ -4,12 +4,17 @@
         _temporalWeight("Temporal Weight", Range(0,1)) = 0.5
     }
     SubShader {
-        Tags { "RenderType"="Transparent" "Queue" = "Transparent+998" }
+        Tags { "RenderType"="Transparent" "Queue" = "Transparent+999" }
         LOD 100
-        ZTest Off
+        Cull Front
+        Ztest Always
         GrabPass{ "_OldBufferTexture" }
         GrabPass{ "_CurrentBufferTexture" }
         Pass {
+            Stencil {
+                Ref 128
+                Comp Equal
+            }
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag

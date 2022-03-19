@@ -32,7 +32,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    attribute: material._Offset
+    attribute: material._OffsetX
     path: 
     classID: 23
     script: {fileID: 0}
@@ -46,7 +46,7 @@ AnimationClip:
     genericBindings:
     - serializedVersion: 2
       path: 0
-      attribute: 2274699365
+      attribute: 2328704692
       script: {fileID: 0}
       typeID: 23
       customType: 22
@@ -88,7 +88,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    attribute: material._Offset
+    attribute: material._OffsetX
     path: 
     classID: 23
     script: {fileID: 0}

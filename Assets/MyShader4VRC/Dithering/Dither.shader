@@ -3,8 +3,9 @@
         _MainTex ("Texture", 2D) = "white" {}
         [HDR] _Color ("Color", Color) = (1,1,1,1)
         _Shade("Shade Str",Range(0,1)) = 0.5
-        [KeywordEnum(NONE, BAYER, IGN, WHITE)]_NOISE("Noise Keyword", Int) = 0
+        [KeywordEnum(NONE, TEX, IGN, WHITE)]_NOISE("Noise Keyword", Int) = 0
         _BayerTex ("Texture", 2D) = "white" {}
+        _TemporalOffsetX("Temporal Offset X", Range(0,1)) = 0
         _OffsetX("Bayer Offset X", Range(0,1)) = 0
         _OffsetY("Bayer Offset Y", Range(0,1)) = 0
     }
@@ -16,7 +17,7 @@
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #pragma shader_feature _NOISE_NONE _NOISE_BAYER _NOISE_WHITE _NOISE_IGN
+            #pragma shader_feature _NOISE_NONE _NOISE_TEX _NOISE_WHITE _NOISE_IGN
             // make fog work
             #pragma multi_compile_fog
 
@@ -41,6 +42,7 @@
             };
 
             uniform float4 _Color;
+            uniform float _TemporalOffsetX;
             uniform float _OffsetX;
             uniform float _OffsetY;
             sampler2D _BayerTex;
@@ -68,8 +70,8 @@
             float3 frag (v2f i) : SV_Target {
                 float4 col = tex2D(_MainTex, i.uv) * _Color;
 
-                #ifdef _NOISE_BAYER //bayer matrix
-                    float2 screenUV = (i.scrPos.xy / i.scrPos.w) * ((_ScreenParams.xy) / _BayerTex_TexelSize.zw) + float2(_OffsetX, _OffsetY);
+                #ifdef _NOISE_TEX //texture based
+                    float2 screenUV = (i.scrPos.xy / i.scrPos.w) * ((_ScreenParams.xy) / _BayerTex_TexelSize.zw) + float2(_OffsetX + _TemporalOffsetX, _OffsetY + _TemporalOffsetX);
                     float threshold = clamp(tex2D( _BayerTex, screenUV ).r, 0.001, 0.999);
                 #elif _NOISE_WHITE //white noise
                     float2 screenUV = (i.scrPos.xy / i.scrPos.w) * _ScreenParams.xy;
