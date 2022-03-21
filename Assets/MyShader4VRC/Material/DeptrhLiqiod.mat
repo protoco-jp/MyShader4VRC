@@ -7,9 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Dither
-  m_Shader: {fileID: 4800000, guid: 10ca4c85191788c4aa752cb500b3b415, type: 3}
-  m_ShaderKeywords: _NOISE_BAYER _NOISE_BLUE _NOISE_TEX
+  m_Name: DeptrhLiqiod
+  m_Shader: {fileID: 4800000, guid: 1e29b25075a8c424fbdf5384dd5095a8, type: 3}
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -19,15 +19,7 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _BayerTex:
-        m_Texture: {fileID: 2800000, guid: 078f57da4a0a8aa43a0cebaf92813ad9, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _Color:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -64,31 +56,23 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _Alpha: 0
     - _BumpScale: 1
     - _Cutoff: 0.5
-    - _Density: 0.776
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _Fade: 0.1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _IGN_Offset: 0.657
     - _Metallic: 0
     - _Mode: 0
-    - _NOISE: 1
     - _OcclusionStrength: 1
-    - _Offset: 0
-    - _OffsetX: 0.103
-    - _OffsetY: 0.366
     - _Parallax: 0.02
-    - _Shade: 0.766
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _TemporalOffsetX: 0.733
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0, g: 0.07058824, b: 1, a: 0.21960784}
+    - _Color: {r: 0.39302015, g: 0, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

@@ -1,4 +1,4 @@
-﻿Shader "Dither/Blur" {
+﻿Shader "MS4VRC/Dither/Blur" {
     Properties {
         [KeywordEnum(BOX_2X2, BOX_4X4)]_BLUR("Box Size", Int) = 0
         _Blur_Edge("ON/OFF",Range(0,1)) = 0

@@ -1,4 +1,4 @@
-﻿Shader "Dither/FakeTAA/GrabBuffer"
+﻿Shader "MS4VRC/Dither/FakeTAA/GrabBuffer"
 {
     SubShader
     {

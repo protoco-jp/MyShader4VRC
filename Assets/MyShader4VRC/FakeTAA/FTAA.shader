@@ -1,4 +1,4 @@
-﻿Shader "Dither/FakeTAA/FTAA"
+﻿Shader "MS4VRC/Dither/FakeTAA/FTAA"
 {
     Properties {
         _temporalWeight("Temporal Weight", Range(0,1)) = 0.5

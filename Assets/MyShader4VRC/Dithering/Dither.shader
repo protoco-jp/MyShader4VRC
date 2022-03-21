@@ -1,7 +1,8 @@
-﻿Shader "Dither/Dither" {
+﻿Shader "MS4VRC/Dither/Dither" {
     Properties {
         _MainTex ("Texture", 2D) = "white" {}
         [HDR] _Color ("Color", Color) = (1,1,1,1)
+        _Density("Density", Range(0,1)) = 1
         _Shade("Shade Str",Range(0,1)) = 0.5
         [KeywordEnum(NONE, TEX, IGN, WHITE)]_NOISE("Noise Keyword", Int) = 0
         _BayerTex ("Texture", 2D) = "white" {}
@@ -42,6 +43,7 @@
             };
 
             uniform float4 _Color;
+            float _Density;
             uniform float _TemporalOffsetX;
             uniform float _OffsetX;
             uniform float _OffsetY;
@@ -82,7 +84,7 @@
                     float threshold = frac(magic.z * frac(dot(screenUV,magic.xy)));
                 #endif
                 #ifndef _NOISE_NONE
-                    clip(_Color.a - threshold);
+                    clip(_Density - threshold);
                 #endif
 
                 float3 dLight = normalize(_WorldSpaceLightPos0.xyz);

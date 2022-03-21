@@ -1,4 +1,4 @@
-﻿Shader "Transparent/FakeRefraction"
+﻿Shader "MS4VRC/Transparent/FakeRefraction"
 {
     Properties {
         _Color("Color", Color) = (1, 1, 1, 1)
