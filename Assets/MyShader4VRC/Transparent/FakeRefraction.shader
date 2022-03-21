@@ -1,4 +1,4 @@
-﻿Shader "DepthLiquid/Translucent/FakeRefraction"
+﻿Shader "Transparent/FakeRefraction"
 {
     Properties {
         _Color("Color", Color) = (1, 1, 1, 1)
