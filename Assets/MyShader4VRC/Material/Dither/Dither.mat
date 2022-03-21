@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Dither
   m_Shader: {fileID: 4800000, guid: 10ca4c85191788c4aa752cb500b3b415, type: 3}
-  m_ShaderKeywords: _NOISE_BAYER _NOISE_BLUE _NOISE_TEX
+  m_ShaderKeywords: IS_TOON _NOISE_BAYER _NOISE_BLUE _NOISE_TEX
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -64,25 +64,32 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - IS_TOON: 0
     - _Alpha: 0
     - _BumpScale: 1
     - _Cutoff: 0.5
-    - _Density: 0.531
+    - _Density: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _IGN_Offset: 0.657
+    - _IsToon: 1
+    - _Is_Toon: 0
     - _Metallic: 0
     - _Mode: 0
     - _NOISE: 1
+    - _NO_SHADE: 0
+    - _No_Shade: 0
     - _OcclusionStrength: 1
     - _Offset: 0
     - _OffsetX: 0.103
     - _OffsetY: 0.366
     - _Parallax: 0.02
-    - _Shade: 1
+    - _Sarturate_Color: 0
+    - _Saturate: 0
+    - _Shade: 0.813
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -90,5 +97,5 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0, g: 0.07058824, b: 1, a: 0.21960784}
+    - _Color: {r: 0.7490196, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

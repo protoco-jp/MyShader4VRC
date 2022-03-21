@@ -1,16 +1,20 @@
 ﻿Shader "MS4VRC/Dither/Dither" {
     Properties {
+        [Header(Shader Variant)]
+        [Toggle] _No_Shade("No Shade", Float) = 0
+        [Toggle] _Saturate("Saturate", Float) = 0
+        [KeywordEnum(NONE, TEX, IGN, WHITE)]_NOISE("Noise Pattern", Int) = 0
+    
         [Header(Color Properties)]
-        _MainTex ("Texture", 2D) = "white" {}
         [HDR] _Color ("Color", Color) = (1,1,1,1)
         _Shade("Shade Str",Range(0,1)) = 0.5
+        _MainTex ("Texture", 2D) = "white" {}
 
         [Header(Discard Properties)]
-        [NoScaleOffset] _BayerTex ("Dither Texture", 2D) = "white" {}
-        [KeywordEnum(NONE, TEX, IGN, WHITE)]_NOISE("Noise Pattern", Int) = 0
         _Density("Density", Range(0,1)) = 1
         _OffsetX("Dither Offset X", Range(0,1)) = 0
         _OffsetY("Dither Offset Y", Range(0,1)) = 0
+        [NoScaleOffset] _BayerTex ("Dither Texture", 2D) = "white" {}
     }
     SubShader {
         Tags { "Queue"="AlphaTest" "LightMode"="ForwardBase"}
@@ -21,6 +25,8 @@
             #pragma vertex vert
             #pragma fragment frag
             #pragma shader_feature _NOISE_NONE _NOISE_TEX _NOISE_WHITE _NOISE_IGN
+            #pragma shader_feature _ _NO_SHADE_ON _SARTURATE_COLOR_ON
+            #pragma shader_feature _ _SATURATE_ON
             // make fog work
             #pragma multi_compile_fog
 
@@ -88,10 +94,19 @@
                     clip(_Density - threshold);
                 #endif
 
+                #ifdef _NO_SHADE_ON
+                col = col * _LightColor0;
+                #else
                 float3 dLight = normalize(_WorldSpaceLightPos0.xyz);
                 float3 normal = normalize(i.normal);
                 fixed4 diffuse = max(0, dot(dLight, normal) * _Shade + (1 - _Shade));
                 col *= diffuse * _LightColor0;// * float4(i.ambient,0);
+                #endif
+
+                #ifdef _SATURATE_ON
+                col = saturate(col);
+                #endif
+
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 return col.rgb;
             }

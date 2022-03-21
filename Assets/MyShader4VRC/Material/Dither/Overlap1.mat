@@ -67,7 +67,7 @@ Material:
     - _Alpha: 1
     - _BumpScale: 1
     - _Cutoff: 0.5
-    - _Density: 1
+    - _Density: 0.355
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
