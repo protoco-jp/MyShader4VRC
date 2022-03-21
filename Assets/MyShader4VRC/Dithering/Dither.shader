@@ -4,7 +4,7 @@
         _MainTex ("Texture", 2D) = "white" {}
         [HDR] _Color ("Color", Color) = (1,1,1,1)
         _Shade("Shade Str",Range(0,1)) = 0.5
- 
+
         [Header(Discard Properties)]
         [NoScaleOffset] _BayerTex ("Dither Texture", 2D) = "white" {}
         [KeywordEnum(NONE, TEX, IGN, WHITE)]_NOISE("Noise Pattern", Int) = 0
