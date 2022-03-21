@@ -1,14 +1,16 @@
 ﻿Shader "MS4VRC/Dither/Dither" {
     Properties {
+        [Header(Color Properties)]
         _MainTex ("Texture", 2D) = "white" {}
         [HDR] _Color ("Color", Color) = (1,1,1,1)
-        _Density("Density", Range(0,1)) = 1
         _Shade("Shade Str",Range(0,1)) = 0.5
-        [KeywordEnum(NONE, TEX, IGN, WHITE)]_NOISE("Noise Keyword", Int) = 0
-        _BayerTex ("Texture", 2D) = "white" {}
-        _TemporalOffsetX("Temporal Offset X", Range(0,1)) = 0
-        _OffsetX("Bayer Offset X", Range(0,1)) = 0
-        _OffsetY("Bayer Offset Y", Range(0,1)) = 0
+ 
+        [Header(Discard Properties)]
+        [NoScaleOffset] _BayerTex ("Dither Texture", 2D) = "white" {}
+        [KeywordEnum(NONE, TEX, IGN, WHITE)]_NOISE("Noise Pattern", Int) = 0
+        _Density("Density", Range(0,1)) = 1
+        _OffsetX("Dither Offset X", Range(0,1)) = 0
+        _OffsetY("Dither Offset Y", Range(0,1)) = 0
     }
     SubShader {
         Tags { "Queue"="AlphaTest" "LightMode"="ForwardBase"}
@@ -43,15 +45,14 @@
             };
 
             uniform float4 _Color;
-            float _Density;
-            uniform float _TemporalOffsetX;
+            sampler2D _MainTex;
+            uniform float4 _MainTex_ST;
+            uniform float _Shade;
+            sampler2D _BayerTex;
+            uniform float4 _BayerTex_TexelSize;
+            uniform float _Density;
             uniform float _OffsetX;
             uniform float _OffsetY;
-            sampler2D _BayerTex;
-            float4 _BayerTex_TexelSize;
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
-            float _Shade;
 
             v2f vert (appdata v) {
                 v2f o;
@@ -73,7 +74,7 @@
                 float4 col = tex2D(_MainTex, i.uv) * _Color;
 
                 #ifdef _NOISE_TEX //texture based
-                    float2 screenUV = (i.scrPos.xy / i.scrPos.w) * ((_ScreenParams.xy) / _BayerTex_TexelSize.zw) + float2(_OffsetX + _TemporalOffsetX, _OffsetY + _TemporalOffsetX);
+                    float2 screenUV = (i.scrPos.xy / i.scrPos.w) * ((_ScreenParams.xy) / _BayerTex_TexelSize.zw) + float2(_OffsetX, _OffsetY);
                     float threshold = clamp(tex2D( _BayerTex, screenUV ).r, 0.001, 0.999);
                 #elif _NOISE_WHITE //white noise
                     float2 screenUV = (i.scrPos.xy / i.scrPos.w) * _ScreenParams.xy;
