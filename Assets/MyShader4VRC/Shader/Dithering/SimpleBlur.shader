@@ -23,6 +23,8 @@
 
             #include "UnityCG.cginc"
 
+            #define ADD_OFFSET_BGCOLOR(x,y) bgcolor += tex2D(_BlurTexture, screenUV + float2(x, y))
+
             struct appdata {
                 float4 vertex : POSITION;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
@@ -56,35 +58,35 @@
 
                 float4 bgcolor = tex2D(_BlurTexture, screenUV);
                 #ifdef _BLUR_BOX_2X2
-                bgcolor += tex2D(_BlurTexture, screenUV + float2(texcelSize.x, texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + float2(texcelSize.x, 0));
-                bgcolor += tex2D(_BlurTexture, screenUV + float2(0, texcelSize.y));
+                ADD_OFFSET_BGCOLOR(texcelSize.x, texcelSize.y);
+                ADD_OFFSET_BGCOLOR(texcelSize.x, 0);
+                ADD_OFFSET_BGCOLOR(0, texcelSize.y);
                 bgcolor /= 4;
                 #elif _BLUR_BOX_4X4
-                bgcolor += tex2D(_BlurTexture, screenUV + float2(texcelSize.x, texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + float2(texcelSize.x, 0));
-                bgcolor += tex2D(_BlurTexture, screenUV + float2(texcelSize.x, -texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + float2(texcelSize.x, -2*texcelSize.y));
+                ADD_OFFSET_BGCOLOR(texcelSize.x, texcelSize.y);
+                ADD_OFFSET_BGCOLOR(texcelSize.x, 0);
+                ADD_OFFSET_BGCOLOR(texcelSize.x, -texcelSize.y);
+                ADD_OFFSET_BGCOLOR(texcelSize.x, -2*texcelSize.y);
 
-                bgcolor += tex2D(_BlurTexture, screenUV + float2(0, texcelSize.y));
-                //bgcolor += tex2D(_BlurTexture, screenUV + float2(0, 0));
-                bgcolor += tex2D(_BlurTexture, screenUV + float2(0, -texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + float2(0, -2*texcelSize.y));
+                ADD_OFFSET_BGCOLOR(0, texcelSize.y);
+                //ADD_OFFSET_BGCOLOR(0, 0);
+                ADD_OFFSET_BGCOLOR(0, -texcelSize.y);
+                ADD_OFFSET_BGCOLOR(0, -2*texcelSize.y);
 
-                bgcolor += tex2D(_BlurTexture, screenUV + float2(-texcelSize.x, texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + float2(-texcelSize.x, 0));
-                bgcolor += tex2D(_BlurTexture, screenUV + float2(-texcelSize.x, -texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + float2(-texcelSize.x, -2*texcelSize.y));
+                ADD_OFFSET_BGCOLOR(-texcelSize.x, texcelSize.y);
+                ADD_OFFSET_BGCOLOR(-texcelSize.x, 0);
+                ADD_OFFSET_BGCOLOR(-texcelSize.x, -texcelSize.y);
+                ADD_OFFSET_BGCOLOR(-texcelSize.x, -2*texcelSize.y);
 
-                bgcolor += tex2D(_BlurTexture, screenUV + float2(-2*texcelSize.x, texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + float2(-2*texcelSize.x, 0));
-                bgcolor += tex2D(_BlurTexture, screenUV + float2(-2*texcelSize.x, -texcelSize.y));
-                bgcolor += tex2D(_BlurTexture, screenUV + float2(-2*texcelSize.x, -2*texcelSize.y));
+                ADD_OFFSET_BGCOLOR(-2*texcelSize.x, texcelSize.y);
+                ADD_OFFSET_BGCOLOR(-2*texcelSize.x, 0);
+                ADD_OFFSET_BGCOLOR(-2*texcelSize.x, -texcelSize.y);
+                ADD_OFFSET_BGCOLOR(-2*texcelSize.x, -2*texcelSize.y);
 
                 bgcolor /= 16;
                 #endif
 
-                return bgcolor * (1 - _Blur_Edge) + _Blur_Edge * tex2D(_BlurTexture, screenUV);
+                return bgcolor * (1 - _Blur_Edge) + tex2D(_BlurTexture, screenUV) * _Blur_Edge;
             }
             ENDCG
         }
