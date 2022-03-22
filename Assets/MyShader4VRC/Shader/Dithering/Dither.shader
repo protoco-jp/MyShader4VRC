@@ -1,13 +1,14 @@
 ﻿Shader "MS4VRC/Dither/Dither" {
     Properties {
         [Header(Shader Variant)]
-        [Toggle] _No_Shade("No Shade", Float) = 0
+        [KeywordEnum(NONE, HARD, SOFT)]_SHADOW("Shadow Type", Int) = 0
         [Toggle] _Saturate("Saturate", Float) = 0
         [KeywordEnum(NONE, TEX, IGN, WHITE)]_NOISE("Noise Pattern", Int) = 0
     
         [Header(Color Properties)]
         [HDR] _Color ("Color", Color) = (1,1,1,1)
         _Shade("Shade Str",Range(0,1)) = 0.5
+        _ShadeStep("Shade Step",Range(1,-1)) = 0.5
         _MainTex ("Texture", 2D) = "white" {}
 
         [Header(Discard Properties)]
@@ -25,7 +26,7 @@
             #pragma vertex vert
             #pragma fragment frag
             #pragma shader_feature _NOISE_NONE _NOISE_TEX _NOISE_WHITE _NOISE_IGN
-            #pragma shader_feature _ _NO_SHADE_ON _SARTURATE_COLOR_ON
+            #pragma shader_feature _SHADOW_NONE _SHADOW_HARD _SHADOW_SOFT
             #pragma shader_feature _ _SATURATE_ON
             // make fog work
             #pragma multi_compile_fog
@@ -54,6 +55,7 @@
             sampler2D _MainTex;
             uniform float4 _MainTex_ST;
             uniform float _Shade;
+            uniform float _ShadeStep;
             sampler2D _BayerTex;
             uniform float4 _BayerTex_TexelSize;
             uniform float _Density;
@@ -94,17 +96,21 @@
                     clip(_Density - threshold);
                 #endif
 
-                #ifdef _NO_SHADE_ON
-                col = col * _LightColor0;
+                #ifdef _SHADOW_NONE
+                    col = col * _LightColor0;
                 #else
-                float3 dLight = normalize(_WorldSpaceLightPos0.xyz);
-                float3 normal = normalize(i.normal);
-                fixed4 diffuse = max(0, dot(dLight, normal) * _Shade + (1 - _Shade));
-                col *= diffuse * _LightColor0;// * float4(i.ambient,0);
+                    float3 dLight = normalize(_WorldSpaceLightPos0.xyz);
+                    float3 normal = normalize(i.normal);
+                    fixed4 diffuse = dot(dLight, normal);
+                    #ifdef _SHADOW_HARD
+                        diffuse = step(_ShadeStep, diffuse);
+                    #endif
+                    diffuse = diffuse * _Shade + (1 - _Shade);
+                    col *= diffuse * _LightColor0;// * float4(i.ambient,0);
                 #endif
 
                 #ifdef _SATURATE_ON
-                col = saturate(col);
+                    col = saturate(col);
                 #endif
 
                 UNITY_APPLY_FOG(i.fogCoord, col);
