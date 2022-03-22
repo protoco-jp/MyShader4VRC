@@ -1,4 +1,4 @@
-﻿Shader "MS4VRC/Dither/Dither" {
+﻿Shader "MS4VRC/Dither/DitherToon" {
     Properties {
         [Header(Shader Variant)]
         [KeywordEnum(NONE, HARD, SOFT)]_SHADOW("Shadow Type", Int) = 0
@@ -8,7 +8,7 @@
         [Header(Color Properties)]
         [HDR] _Color ("Color", Color) = (1,1,1,1)
         _Shade("Shade Str",Range(0,1)) = 0.5
-        _ShadeStep("Shade Step",Range(1,-1)) = 0.5
+        _ShadeStep("Shade Step",Range(1,-1)) = 0
         _MainTex ("Texture", 2D) = "white" {}
 
         [Header(Discard Properties)]
