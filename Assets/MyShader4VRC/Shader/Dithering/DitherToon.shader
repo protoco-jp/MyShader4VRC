@@ -1,4 +1,21 @@
-﻿Shader "MS4VRC/Dither/DitherToon" {
+﻿/* DONE
+SHADE
+DITHER
+*/
+
+/* TODO
+MATCAP
+cginc/EDITOR
+FORWARDBASE
+METALIC
+FORWARDADD
+CAST SHADOW
+RECEIVE SHADOW?
+GEOMETRY
+VAT
+*/
+
+Shader "MS4VRC/Dither/DitherToon" {
     Properties {
         [Header(Shader Variant)]
         [KeywordEnum(NONE, HARD, SOFT)]_SHADOW("Shadow Type", Int) = 0
@@ -28,6 +45,8 @@
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma multi_compile_fwdbase
+
             #pragma shader_feature _SHADOW_NONE _SHADOW_HARD _SHADOW_SOFT
             #pragma shader_feature _NOISE_NONE _NOISE_TEX _NOISE_WHITE _NOISE_IGN
             #pragma shader_feature _ALPHA_PARAM _ALPHA_MUL _ALPHA_MASK
@@ -143,6 +162,31 @@
             }
             ColorMask 0
             ZWrite Off
+        }
+
+        Pass {
+          Tags {"LightMode"="ShadowCaster"}
+
+          CGPROGRAM
+          #pragma vertex vert
+          #pragma fragment frag
+          #pragma multi_compile_shadowcaster
+          #include "UnityCG.cginc"
+
+          struct v2f {
+            V2F_SHADOW_CASTER;
+          };
+
+          v2f vert(appdata_base v) {
+            v2f o;
+            TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
+            return o;
+          }
+
+          float4 frag(v2f i) : SV_Target {
+            SHADOW_CASTER_FRAGMENT(i)
+          }
+          ENDCG
         }
     }
 }
