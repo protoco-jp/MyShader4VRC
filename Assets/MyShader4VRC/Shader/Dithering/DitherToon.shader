@@ -118,7 +118,12 @@
                 #ifndef _SHADOW_NONE
                     float3 dLight = normalize(max(float3(0, 0.01, 0), _WorldSpaceLightPos0.xyz));
                     float3 normal = normalize(i.normal);
-                    fixed4 diffuse = dot(dLight, normal) + float4(i.ambient, 0);
+                    #ifdef _SATURATE_ON
+                        fixed4 diffuse = dot(dLight, normal) + float4(i.ambient, 0);
+                    #else
+                        fixed4 diffuse = dot(dLight, normal) + float4(saturate(i.ambient), 0);
+                    #endif
+
                     #ifdef _SHADOW_HARD
                         diffuse = step(_ShadeStep, diffuse);
                     #endif
