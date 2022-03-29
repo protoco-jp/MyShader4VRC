@@ -9,8 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Dither
   m_Shader: {fileID: 4800000, guid: 10ca4c85191788c4aa752cb500b3b415, type: 3}
-  m_ShaderKeywords: IS_TOON _ALPHA_PARAM _NOISE_BAYER _NOISE_BLUE _NOISE_TEX _SHADOW_HARD
-    _SHADOW_STEP
+  m_ShaderKeywords: IS_TOON _ALPHA_PARAM _NOISE_BAYER _NOISE_BLUE _NOISE_TEX _SATURATE_ON
+    _SHADOW_HARD _SHADOW_STEP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -20,6 +20,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _AlphaMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BayerTex:
         m_Texture: {fileID: 2800000, guid: 078f57da4a0a8aa43a0cebaf92813ad9, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -70,7 +74,7 @@ Material:
     - _Alpha: 0
     - _BumpScale: 1
     - _Cutoff: 0.5
-    - _Density: 0.322
+    - _Density: 0.223
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
@@ -91,15 +95,16 @@ Material:
     - _Parallax: 0.02
     - _SHADOW: 1
     - _Sarturate_Color: 0
-    - _Saturate: 0
-    - _Shade: 0.339
-    - _ShadeStep: -0.235
+    - _Saturate: 1
+    - _Shade: 0.5
+    - _ShadeStep: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _TemporalOffsetX: 0.733
     - _UVSec: 0
+    - _Unlit: 0.5
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.7490196, g: 0, b: 0, a: 1}
+    - _Color: {r: 1, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

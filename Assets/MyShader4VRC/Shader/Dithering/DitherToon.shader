@@ -2,12 +2,13 @@
     Properties {
         [Header(Shader Variant)]
         [KeywordEnum(NONE, HARD, SOFT)]_SHADOW("Shadow Type", Int) = 0
-        [Toggle] _Saturate("Saturate", Float) = 0
+        [Toggle] _Saturate("Saturate Light", Float) = 0
         [KeywordEnum(NONE, TEX, IGN, WHITE)]_NOISE("Noise Pattern", Int) = 0
         [KeywordEnum(PARAM, MUL, MASK)]_ALPHA("Alpha type", Int) = 0
 
         [Header(Color Properties)]
         [HDR] _Color ("Color", Color) = (1,1,1,1)
+        _Unlit("Unlit",Range(0,1)) = 0.5
         _Shade("Shade Str",Range(0,1)) = 0.5
         _ShadeStep("Shade Step",Range(1,-1)) = 0
         _MainTex ("MainTexture", 2D) = "white" {}
@@ -59,6 +60,7 @@
             sampler2D _AlphaMask;
             uniform float4 _MainTex_ST;
             uniform float _Shade;
+            uniform float _Unlit;
             uniform float _ShadeStep;
 
             sampler2D _BayerTex;
@@ -107,20 +109,21 @@
                     #endif
                 #endif
 
-                #ifdef _SHADOW_NONE
-                    col = col * _LightColor0;
+                #ifdef _SATURATE_ON
+                    col *= saturate(_LightColor0) * (1 - _Unlit) +  _Unlit;
                 #else
-                    float3 dLight = normalize(_WorldSpaceLightPos0.xyz);
+                    col *= _LightColor0 * (1 - _Unlit) +  _Unlit;
+                #endif
+
+                #ifndef _SHADOW_NONE
+                    float3 dLight = normalize(max(float3(0, 0.01, 0), _WorldSpaceLightPos0.xyz));
                     float3 normal = normalize(i.normal);
-                    fixed4 diffuse = dot(dLight, normal);
+                    fixed4 diffuse = dot(dLight, normal) + float4(i.ambient, 0);
                     #ifdef _SHADOW_HARD
                         diffuse = step(_ShadeStep, diffuse);
                     #endif
-                    diffuse = diffuse * _Shade + (1 - _Shade);
-                    col *= diffuse * _LightColor0;// * float4(i.ambient,0);
-                #endif
-                #ifdef _SATURATE_ON
-                    col = saturate(col);
+                    diffuse = diffuse * (1 - _Shade) +  _Shade;
+                    col *= diffuse;
                 #endif
 
                 UNITY_APPLY_FOG(i.fogCoord, col);
