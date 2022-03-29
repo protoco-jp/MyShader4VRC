@@ -4,12 +4,14 @@
         [KeywordEnum(NONE, HARD, SOFT)]_SHADOW("Shadow Type", Int) = 0
         [Toggle] _Saturate("Saturate", Float) = 0
         [KeywordEnum(NONE, TEX, IGN, WHITE)]_NOISE("Noise Pattern", Int) = 0
-    
+        [KeywordEnum(PARAM, MUL, MASK)]_ALPHA("Alpha type", Int) = 0
+
         [Header(Color Properties)]
         [HDR] _Color ("Color", Color) = (1,1,1,1)
         _Shade("Shade Str",Range(0,1)) = 0.5
         _ShadeStep("Shade Step",Range(1,-1)) = 0
-        _MainTex ("Texture", 2D) = "white" {}
+        _MainTex ("MainTexture", 2D) = "white" {}
+        _AlphaMask ("AlphaMask", 2D) = "white" {}
 
         [Header(Discard Properties)]
         _Density("Density", Range(0,1)) = 1
@@ -25,8 +27,9 @@
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #pragma shader_feature _NOISE_NONE _NOISE_TEX _NOISE_WHITE _NOISE_IGN
             #pragma shader_feature _SHADOW_NONE _SHADOW_HARD _SHADOW_SOFT
+            #pragma shader_feature _NOISE_NONE _NOISE_TEX _NOISE_WHITE _NOISE_IGN
+            #pragma shader_feature _ALPHA_PARAM _ALPHA_MUL _ALPHA_MASK
             #pragma shader_feature _ _SATURATE_ON
             // make fog work
             #pragma multi_compile_fog
@@ -53,9 +56,11 @@
 
             uniform float4 _Color;
             sampler2D _MainTex;
+            sampler2D _AlphaMask;
             uniform float4 _MainTex_ST;
             uniform float _Shade;
             uniform float _ShadeStep;
+
             sampler2D _BayerTex;
             uniform float4 _BayerTex_TexelSize;
             uniform float _Density;
@@ -93,7 +98,13 @@
                     float threshold = frac(magic.z * frac(dot(screenUV,magic.xy)));
                 #endif
                 #ifndef _NOISE_NONE
-                    clip(_Density - threshold);
+                    #ifdef _ALPHA_MASK
+                        clip(_Density * tex2D(_AlphaMask, i.uv) - threshold);
+                    #elif _ALPHA_MUL
+                        clip(_Density * col.a - threshold);
+                    #elif _ALPHA_PARAM
+                        clip(_Density - threshold);
+                    #endif
                 #endif
 
                 #ifdef _SHADOW_NONE
