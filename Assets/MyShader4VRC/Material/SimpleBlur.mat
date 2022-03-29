@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: SimpleBlur
   m_Shader: {fileID: 4800000, guid: a92b0531ad4b798498341538a8f096fc, type: 3}
-  m_ShaderKeywords: _BLUR_BOX_2X2 _BLUR_BOX_3X3 _BLUR_ON_OFF_ON _NOISE_BOX_4X4
+  m_ShaderKeywords: _BLUR_BOX_2X2 _BLUR_ON_OFF_ON _NOISE_BOX_4X4
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0

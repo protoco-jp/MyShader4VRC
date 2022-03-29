@@ -1,10 +1,10 @@
 ﻿Shader "MS4VRC/Dither/Blur" {
     Properties {
-        [KeywordEnum(BOX_2X2, BOX_4X4)]_BLUR("Box Size", Int) = 0
+        [KeywordEnum(BOX_2X2, BOX_3X3, BOX_4X4)]_BLUR("Box Size", Int) = 0
         _Blur_Edge("ON/OFF",Range(0,1)) = 0
     }
     SubShader {
-        Tags { "RenderType"="Transparent" "Queue" = "Transparent+998" }
+        Tags { "RenderType"="Transparent" "Queue" = "Transparent+998" "VRCFallback" = "Hidden" }
         LOD 100
         Cull Front
         Ztest Always
@@ -19,7 +19,7 @@
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #pragma shader_feature _BLUR_BOX_2X2 _BLUR_BOX_4X4
+            #pragma shader_feature _BLUR_BOX_2X2 _BLUR_BOX_3X3 _BLUR_BOX_4X4
 
             #include "UnityCG.cginc"
 
@@ -62,6 +62,19 @@
                 ADD_OFFSET_BGCOLOR(texcelSize.x, 0);
                 ADD_OFFSET_BGCOLOR(0, texcelSize.y);
                 bgcolor /= 4;
+                #elif _BLUR_BOX_3X3
+                ADD_OFFSET_BGCOLOR(texcelSize.x, texcelSize.y);
+                ADD_OFFSET_BGCOLOR(texcelSize.x, 0);
+                ADD_OFFSET_BGCOLOR(texcelSize.x, -texcelSize.y);
+
+                ADD_OFFSET_BGCOLOR(0, texcelSize.y);
+                ADD_OFFSET_BGCOLOR(0, -texcelSize.y);
+
+                ADD_OFFSET_BGCOLOR(-texcelSize.x, texcelSize.y);
+                ADD_OFFSET_BGCOLOR(-texcelSize.x, 0);
+                ADD_OFFSET_BGCOLOR(-texcelSize.x, -texcelSize.y);
+
+                bgcolor /= 9;
                 #elif _BLUR_BOX_4X4
                 ADD_OFFSET_BGCOLOR(texcelSize.x, texcelSize.y);
                 ADD_OFFSET_BGCOLOR(texcelSize.x, 0);
@@ -69,7 +82,6 @@
                 ADD_OFFSET_BGCOLOR(texcelSize.x, -2*texcelSize.y);
 
                 ADD_OFFSET_BGCOLOR(0, texcelSize.y);
-                //ADD_OFFSET_BGCOLOR(0, 0);
                 ADD_OFFSET_BGCOLOR(0, -texcelSize.y);
                 ADD_OFFSET_BGCOLOR(0, -2*texcelSize.y);
 

@@ -108,7 +108,6 @@
                     diffuse = diffuse * _Shade + (1 - _Shade);
                     col *= diffuse * _LightColor0;// * float4(i.ambient,0);
                 #endif
-
                 #ifdef _SATURATE_ON
                     col = saturate(col);
                 #endif

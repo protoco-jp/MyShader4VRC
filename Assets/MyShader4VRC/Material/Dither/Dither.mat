@@ -68,7 +68,7 @@ Material:
     - _Alpha: 0
     - _BumpScale: 1
     - _Cutoff: 0.5
-    - _Density: 0.344
+    - _Density: 0.322
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
@@ -90,8 +90,8 @@ Material:
     - _SHADOW: 1
     - _Sarturate_Color: 0
     - _Saturate: 0
-    - _Shade: 0.417
-    - _ShadeStep: 0
+    - _Shade: 0.464
+    - _ShadeStep: -0.235
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
