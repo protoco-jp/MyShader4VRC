@@ -26,7 +26,8 @@ Shader "MS4VRC/Dither/DitherToon" {
         [Header(Color Properties)]
         [HDR] _Color ("Color", Color) = (1,1,1,1)
         _Unlit("Unlit",Range(0,1)) = 0.5
-        _Shade("Shade Str",Range(0,1)) = 0.5
+        _Shade("Shade Str",Range(-1,1)) = 0.5
+        _ShadeMaskStr("Shade Mask Str",Range(-1,1)) = 0.5
         _ShadeStep("Shade Step",Range(1,-1)) = 0
         _MainTex ("MainTexture", 2D) = "white" {}
         _AlphaMask ("AlphaMask", 2D) = "white" {}
@@ -38,24 +39,29 @@ Shader "MS4VRC/Dither/DitherToon" {
         [NoScaleOffset] _BayerTex ("Dither Texture", 2D) = "white" {}
     }
     SubShader {
-        Tags { "Queue"="AlphaTest" "LightMode"="ForwardBase"}
-        LOD 100
+        Tags { "Queue"="AlphaTest" }
 
         Pass {
+            Tags { "LightMode"="ForwardBase" }
+
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #pragma multi_compile_fwdbase
+
+            #pragma multi_compile_fwdbase nolightmap nodirlightmap nodynlightmap novertexlight
+            #pragma multi_compile_fog
 
             #pragma shader_feature _SHADOW_NONE _SHADOW_HARD _SHADOW_SOFT
             #pragma shader_feature _NOISE_NONE _NOISE_TEX _NOISE_WHITE _NOISE_IGN
             #pragma shader_feature _ALPHA_PARAM _ALPHA_MUL _ALPHA_MASK
             #pragma shader_feature _ _SATURATE_ON
             // make fog work
-            #pragma multi_compile_fog
 
-            #include "UnityCG.cginc"
-            #include "Lighting.cginc"
+
+            #include "UnityCG.cginc" 
+            #include "UnityLightingCommon.cginc"
+            #include "Lighting.cginc" 
+            #include "AutoLight.cginc"
 
             struct appdata {
                 float4 vertex : POSITION;
@@ -65,12 +71,13 @@ Shader "MS4VRC/Dither/DitherToon" {
             };
 
             struct v2f {
-                UNITY_FOG_COORDS(1)
-                float4 vertex : SV_POSITION;
+                float4 pos : SV_POSITION;
+                float3 ambient : COLOR0;
                 float2 uv : TEXCOORD0;
                 float4 scrPos : TEXCOORD1;
                 float3 normal : TEXCOORD2;
-                float3 ambient : COLOR0;
+                UNITY_FOG_COORDS(3)
+                SHADOW_COORDS(4)
                 UNITY_VERTEX_OUTPUT_STEREO
             };
 
@@ -79,6 +86,7 @@ Shader "MS4VRC/Dither/DitherToon" {
             sampler2D _AlphaMask;
             uniform float4 _MainTex_ST;
             uniform float _Shade;
+            uniform float _ShadeMaskStr;
             uniform float _Unlit;
             uniform float _ShadeStep;
 
@@ -95,12 +103,13 @@ Shader "MS4VRC/Dither/DitherToon" {
                 UNITY_INITIALIZE_OUTPUT(v2f, o);
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
-                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                o.scrPos = ComputeNonStereoScreenPos(o.vertex);
+                o.scrPos = ComputeNonStereoScreenPos(o.pos);
                 o.normal = UnityObjectToWorldNormal(v.normal);
                 o.ambient = ShadeSH9(float4(o.normal,1));
-                UNITY_TRANSFER_FOG(o,o.vertex);
+                UNITY_TRANSFER_FOG(o,o.pos)
+                TRANSFER_SHADOW(o)
                 return o;
             }
 
@@ -135,23 +144,23 @@ Shader "MS4VRC/Dither/DitherToon" {
                 #endif
 
                 #ifndef _SHADOW_NONE
-                    float3 dLight = normalize(max(float3(0, 0.01, 0), _WorldSpaceLightPos0.xyz));
+                    float3 dLight = normalize( _WorldSpaceLightPos0.xyz);
                     float3 normal = normalize(i.normal);
-                    #ifdef _SATURATE_ON
-                        fixed4 diffuse = dot(dLight, normal) + float4(i.ambient, 0);
-                    #else
-                        fixed4 diffuse = dot(dLight, normal) + float4(saturate(i.ambient), 0);
-                    #endif
-
+                    fixed4 diffuse = dot(dLight, normal);
+                    float ambient = i.ambient.r * 0.298912 + i.ambient.g * 0.586611 + i.ambient.b * 0.114478; 
+                    float4 shadowMask = diffuse * (1 - _ShadeMaskStr) +  _ShadeMaskStr;
                     #ifdef _SHADOW_HARD
                         diffuse = step(_ShadeStep, diffuse);
                     #endif
-                    diffuse = diffuse * (1 - _Shade) +  _Shade;
-                    col *= diffuse;
+                    float4 shadow = shadowMask * SHADOW_ATTENUATION(i) + (1 - shadowMask);
+                    float4 adjustedShadow = diffuse * shadow * (1 - _Shade) +  _Shade;
+                    col *= adjustedShadow;//max(adjustedShadow, ambient);
+                    col += float4(i.ambient.xyz,0);
                 #endif
 
                 UNITY_APPLY_FOG(i.fogCoord, col);
-                return col.rgb;
+
+                return  shadow.rgb;
             }
             ENDCG
         }

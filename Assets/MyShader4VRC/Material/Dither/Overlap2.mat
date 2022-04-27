@@ -72,8 +72,9 @@ Material:
     - _Alpha: 1
     - _BumpScale: 1
     - _Cutoff: 0.5
-    - _Density: 0.205
+    - _Density: 1
     - _DetailNormalMapScale: 1
+    - _DiffuseShade: 0.5
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -90,8 +91,9 @@ Material:
     - _Parallax: 0.02
     - _SHADOW: 2
     - _Saturate: 0
-    - _Shade: 0.5
-    - _ShadeStep: -0.003
+    - _Shade: 0.1
+    - _ShadeMaskStr: 0.999
+    - _ShadeStep: -1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -100,5 +102,6 @@ Material:
     - _Unlit: 1
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 1, g: 0.4192677, b: 0.0141509175, a: 0.46666667}
+    - _Color: {r: 1, g: 1, b: 1, a: 0.46666667}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _MainColor: {r: 0, g: 0, b: 0, a: 1}
