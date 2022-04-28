@@ -146,56 +146,46 @@ Shader "MS4VRC/Dither/DitherToon" {
                 #ifndef _SHADOW_NONE
                     float3 dLight = normalize( _WorldSpaceLightPos0.xyz);
                     float3 normal = normalize(i.normal);
-                    fixed4 diffuse = dot(dLight, normal);
-                    float ambient = i.ambient.r * 0.298912 + i.ambient.g * 0.586611 + i.ambient.b * 0.114478; 
-                    float4 shadowMask = diffuse * (1 - _ShadeMaskStr) +  _ShadeMaskStr;
+                    fixed4 diffuse = dot(dLight, normal) * (1 - _ShadeMaskStr) +  _ShadeMaskStr;
                     #ifdef _SHADOW_HARD
                         diffuse = step(_ShadeStep, diffuse);
                     #endif
-                    float4 shadow = shadowMask * SHADOW_ATTENUATION(i) + (1 - shadowMask);
-                    float4 adjustedShadow = diffuse * shadow * (1 - _Shade) +  _Shade;
-                    col *= adjustedShadow;//max(adjustedShadow, ambient);
-                    col += float4(i.ambient.xyz,0);
+                    float4 shadow = max(diffuse * SHADOW_ATTENUATION(i), 0);
+                    col *=  max (shadow * (1 - _Shade) +  _Shade, float4(i.ambient.xyz,0));
                 #endif
+
+
 
                 UNITY_APPLY_FOG(i.fogCoord, col);
 
-                return  shadow.rgb;
+                return   col.rgb;
             }
             ENDCG
         }
+
         Pass {
-            Stencil {
-                Ref 128
-                Pass Replace
+            Tags {"LightMode"="ShadowCaster"}
+
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma multi_compile_shadowcaster
+            #include "UnityCG.cginc"
+
+            struct v2f {
+                V2F_SHADOW_CASTER;
+            };
+
+            v2f vert(appdata_base v) {
+                v2f o;
+                TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
+                return o;
             }
-            ColorMask 0
-            ZWrite Off
-        }
 
-        Pass {
-          Tags {"LightMode"="ShadowCaster"}
-
-          CGPROGRAM
-          #pragma vertex vert
-          #pragma fragment frag
-          #pragma multi_compile_shadowcaster
-          #include "UnityCG.cginc"
-
-          struct v2f {
-            V2F_SHADOW_CASTER;
-          };
-
-          v2f vert(appdata_base v) {
-            v2f o;
-            TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
-            return o;
-          }
-
-          float4 frag(v2f i) : SV_Target {
-            SHADOW_CASTER_FRAGMENT(i)
-          }
-          ENDCG
+            float4 frag(v2f i) : SV_Target {
+                SHADOW_CASTER_FRAGMENT(i)
+            }
+            ENDCG
         }
     }
 }
